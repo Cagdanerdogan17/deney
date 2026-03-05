@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Araştırma Deneyi</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f0f2f5;color:#222;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .ekran{display:none;background:#fff;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.10);padding:40px 48px;max-width:860px;width:100%}
+    .ekran.aktif{display:block}
+    h1{font-size:1.7rem;margin-bottom:12px;color:#1a1a2e}
+    h2{font-size:1.2rem;margin-bottom:20px;color:#16213e}
+    p{line-height:1.7;margin-bottom:12px;color:#444}
+    .bilgi{background:#eef2ff;border-left:4px solid #4f46e5;border-radius:6px;padding:14px 18px;margin-bottom:20px;font-size:0.95rem}
+    .btn{display:inline-block;padding:12px 28px;border:none;border-radius:8px;font-size:1rem;cursor:pointer;transition:background .2s,transform .1s}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:#4f46e5;color:#fff}
+    .btn-primary:hover{background:#4338ca}
+    .btn-gray{background:#e5e7eb;color:#333}
+    .btn-gray:hover{background:#d1d5db}
+    .btn-row{margin-top:28px;display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap}
+    .form-grup{margin-bottom:20px}
+    .form-grup label{display:block;font-weight:600;margin-bottom:8px;font-size:.95rem}
+    .form-grup input[type=text],.form-grup input[type=number],.form-grup select{width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:7px;font-size:.95rem;outline:none;transition:border .2s}
+    .form-grup input:focus,.form-grup select:focus{border-color:#4f46e5}
+    .hata{color:#dc2626;font-size:.85rem;margin-top:6px;display:none}
+    .bolum-bant{background:#1a1a2e;color:#fff;border-radius:8px;padding:12px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px}
+    .bolum-no{background:#4f46e5;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.95rem;flex-shrink:0}
+    .spinner{width:48px;height:48px;border:5px solid #e5e7eb;border-top-color:#4f46e5;border-radius:50%;animation:spin .9s linear infinite;margin:20px auto}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* Video ekranı */
+    #ekran-video{min-height:500px}
+    .video-kap{display:flex;flex-direction:column;align-items:center;gap:16px}
+    video{width:100%;max-width:720px;border-radius:10px;background:#000;outline:none}
+    .video-ilerleme{font-size:.85rem;color:#888;text-align:center}
+    .ilerleme-kap{background:#e5e7eb;border-radius:999px;height:8px;width:100%;overflow:hidden}
+    .ilerleme-ic{background:#4f46e5;height:100%;border-radius:999px;transition:width .4s}
+    /* Likert ölçek */
+    .olcek-madde{padding:14px 0;border-bottom:1px solid #f3f4f6}
+    .olcek-madde:last-child{border-bottom:none}
+    .madde-metin{font-size:.95rem;font-weight:500;margin-bottom:10px;line-height:1.6}
+    .likert-satir{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+    .likert-satir .uc{font-size:.72rem;color:#777;white-space:nowrap;min-width:80px}
+    .likert-satir .uc:last-child{text-align:right}
+    .radio-grup{display:flex;gap:6px;flex:1;justify-content:center}
+    .radio-grup input[type=radio]{display:none}
+    .radio-grup label{width:36px;height:36px;border:2px solid #d1d5db;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .15s;color:#555;flex-shrink:0}
+    .radio-grup input[type=radio]:checked+label{background:#4f46e5;border-color:#4f46e5;color:#fff}
+    .radio-grup label:hover{border-color:#4f46e5;color:#4f46e5}
+    @media(max-width:600px){.ekran{padding:24px 18px}.likert-satir{flex-wrap:wrap}}
+  </style>
+</head>
+<body>
+
+<!-- ONAM -->
+<section id="ekran-onam" class="ekran aktif">
+  <h1>Bilgilendirilmiş Onam Formu</h1>
+  <p>Bu araştırmaya katılmadan önce lütfen aşağıdaki bilgileri dikkatlice okuyunuz.</p>
+  <p style="margin-top:12px">Çalışma, sosyal tutumlar ve gelecek kaygısı üzerine yürütülen akademik bir araştırmadır. Katılımınız tamamen gönüllülük esasına dayanmakta olup istediğiniz zaman gerekçesiz olarak çalışmadan ayrılabilirsiniz.</p>
+  <p style="margin-top:12px">Araştırma kapsamında kısa video içerikleri izleyecek ve bazı ölçekler dolduracaksınız. Toplanan veriler yalnızca akademik amaçla kullanılacak, kimlik bilgileriniz hiçbir şekilde paylaşılmayacaktır.</p>
+  <div class="bilgi" style="margin-top:20px">
+    Bu formu onaylayarak araştırmaya gönüllü olarak katılmayı kabul ettiğinizi beyan etmiş olursunuz.
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="ekranGec('ekran-demografik')">Okudum, kabul ediyorum →</button>
+  </div>
+</section>
+
+<!-- DEMOGRAFİK -->
+<section id="ekran-demografik" class="ekran">
+  <div class="bolum-bant"><div class="bolum-no">1</div><div>Demografik Bilgiler</div></div>
+  <div class="form-grup">
+    <label>1. Yaşınız</label>
+    <input type="number" id="dem-yas" min="16" max="99" placeholder="Örn: 32"/>
+  </div>
+  <div class="form-grup">
+    <label>2. Cinsiyetiniz</label>
+    <select id="dem-cinsiyet">
+      <option value="">-- Seçiniz --</option>
+      <option>Kadın</option><option>Erkek</option>
+      <option>Queer</option><option>Belirtmek İstemiyorum</option>
+    </select>
+  </div>
+  <div class="form-grup">
+    <label>3. Doğum tarihiniz aşağıdaki aralıklardan hangisinde yer almaktadır?</label>
+    <select id="dem-dogum">
+      <option value="">-- Seçiniz --</option>
+      <option>1965 – 1980</option>
+      <option>1981 – 1996</option>
+      <option>1997 – 2012</option>
+    </select>
+  </div>
+  <div class="form-grup">
+    <label>4. Çalışma durumunuz</label>
+    <select id="dem-calisma">
+      <option value="">-- Seçiniz --</option>
+      <option>Çalışıyorum</option><option>Çalışmıyorum</option>
+      <option>Öğrenciyim</option><option>İş arıyorum</option>
+    </select>
+  </div>
+  <div class="form-grup">
+    <label>5. Son bitirdiğiniz okul</label>
+    <select id="dem-egitim">
+      <option value="">-- Seçiniz --</option>
+      <option>İlköğretim</option><option>Lise</option>
+      <option>Meslek Yüksek Okulu</option><option>Lisans</option>
+      <option>Yüksek Lisans</option><option>Doktora</option>
+    </select>
+  </div>
+  <div id="dem-hata" class="hata">Lütfen tüm alanları doldurun.</div>
+  <div class="btn-row">
+    <button class="btn btn-gray" onclick="ekranGec('ekran-onam')">← Geri</button>
+    <button class="btn btn-primary" onclick="demografikDogrula()">Devam →</button>
+  </div>
+</section>
+
+<!-- VIDEO AÇIKLAMA -->
+<section id="ekran-video-aciklama" class="ekran">
+  <div class="bolum-bant"><div class="bolum-no">2</div><div>Video İzleme</div></div>
+  <p>Birazdan size kısa video içerikleri gösterilecektir.</p>
+  <p style="margin-top:12px">Her video otomatik olarak başlayacaktır. Video bittiğinde sonraki videoya geçebilirsiniz. Lütfen her videoyu dikkatle izleyiniz.</p>
+  <p style="margin-top:12px">Toplam <strong id="video-toplam-bilgi"></strong> video izleyeceksiniz.</p>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="videoBaslat()">Videoları İzlemeye Başla →</button>
+  </div>
+</section>
+
+<!-- VİDEO -->
+<section id="ekran-video" class="ekran">
+  <div class="bolum-bant"><div class="bolum-no">2</div><div>Video İzleme</div></div>
+  <div class="video-ilerleme">
+    <div id="video-ilerleme-metin" style="margin-bottom:6px"></div>
+    <div class="ilerleme-kap"><div class="ilerleme-ic" id="video-ilerleme-ic" style="width:0%"></div></div>
+  </div>
+  <div class="video-kap" style="margin-top:20px">
+    <video id="video-oynatici" controls>
+      <source id="video-kaynak" src="" type="video/mp4"/>
+      Tarayıcınız video oynatmayı desteklemiyor.
+    </video>
+    <button class="btn btn-primary" id="video-ileri-btn" onclick="videoIleri()" style="display:none">
+      Sonraki Video →
+    </button>
+  </div>
+</section>
+
+<!-- ÖLÇEK 1 -->
+<section id="ekran-olcek1" class="ekran">
+  <div class="bolum-bant"><div class="bolum-no">3</div><div>Ölçek 1 / 3</div></div>
+  <p class="bilgi">Aşağıdaki ifadelere katılım düzeyinizi <strong>1 (Hiç Katılmıyorum)</strong> ile <strong>5 (Tamamen Katılıyorum)</strong> arasında işaretleyiniz.</p>
+  <div id="olcek1-maddeler"></div>
+  <div id="olcek1-hata" class="hata">Lütfen tüm soruları yanıtlayın.</div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="olcekDogrula(1)">Devam →</button>
+  </div>
+</section>
+
+<!-- ÖLÇEK 2 -->
+<section id="ekran-olcek2" class="ekran">
+  <div class="bolum-bant"><div class="bolum-no">4</div><div>Ölçek 2 / 3</div></div>
+  <p class="bilgi">Aşağıdaki ifadelere katılım düzeyinizi <strong>1 (Hiç Katılmıyorum)</strong> ile <strong>5 (Tamamen Katılıyorum)</strong> arasında işaretleyiniz.</p>
+  <div id="olcek2-maddeler"></div>
+  <div id="olcek2-hata" class="hata">Lütfen tüm soruları yanıtlayın.</div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="olcekDogrula(2)">Devam →</button>
+  </div>
+</section>
+
+<!-- ÖLÇEK 3 -->
+<section id="ekran-olcek3" class="ekran">
+  <div class="bolum-bant"><div class="bolum-no">5</div><div>Ölçek 3 / 3</div></div>
+  <p class="bilgi">Aşağıdaki ifadelere katılım düzeyinizi <strong>1 (Hiç Katılmıyorum)</strong> ile <strong>5 (Tamamen Katılıyorum)</strong> arasında işaretleyiniz.</p>
+  <div id="olcek3-maddeler"></div>
+  <div id="olcek3-hata" class="hata">Lütfen tüm soruları yanıtlayın.</div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="olcekDogrula(3)">Bitir ve Gönder →</button>
+  </div>
+</section>
+
+<!-- GÖNDERİM -->
+<section id="ekran-gonderim" class="ekran">
+  <h2 style="text-align:center">Verileriniz gönderiliyor…</h2>
+  <div class="spinner"></div>
+  <p style="text-align:center;color:#555">Lütfen bu sayfayı kapatmayın.</p>
+</section>
+
+<!-- BİTİŞ -->
+<section id="ekran-bitis" class="ekran">
+  <h1>Teşekkürler!</h1>
+  <p>Katılımınız için teşekkür ederiz. Yanıtlarınız başarıyla kaydedildi.</p>
+</section>
+
+<script>
+/* ── Ayarlar ───────────────────────────────────────────────────── */
+var GOOGLE_SCRIPT_URL = 'BURAYA_APPS_SCRIPT_URL';
+
+var GRUP_A_VIDEOLAR = [
+  'video1.mp4','video2.mp4','video3.mp4','video4.mp4','video5.mp4',
+  'video6.mp4','video7.mp4','video8.mp4','video9.mp4'
+];
+var GRUP_B_VIDEOLAR = [
+  'video10.mp4','video11.mp4','video12.mp4','video13.mp4','video14.mp4',
+  'video15.mp4','video16.mp4','video17.mp4','video18.mp4'
+];
+
+var OLCEK1 = [
+  "İyi nesiller yetiştirebilmek için, kadının çocuğuna bakması gerekir.",
+  "Kadınlar iş hayatındaki engeller ve güçlüklerle baş edebilirler.",
+  "Kadınların çalışma hayatına girmesi, erkekler arasında işsizliğe yol açacağı için sakıncalıdır.",
+  "Kadınlar aylık rahatsızlıkları ve doğum yapmaları nedeniyle iş hayatında verimsiz olmaktadırlar.",
+  "Kadınlar iş hayatında cinselliklerini ön plana çıkararak, ayrıcalık sağlamaya çalışmaktadırlar.",
+  "Çalışan kadının çocuğu sevgiden yoksun büyümektedir.",
+  "Kocası eve bakabilecek ve ihtiyaçlarını karşılayabilecek durumda olsa bile, kadının çalışması gerektiğine inanıyorum.",
+  "Kadınlarla erkeklerin birlikte çalıştığı iş ortamında, erkekler tahrik olduğu için verim düşebilir.",
+  "Kadınlar ev işlerini aksatmayacak şekilde hafif veya yarım zamanlı işlerde çalışmalılar.",
+  "Kadınlar duygularına göre davrandıkları için işlerinde ortaya çıkan sorunları çözemezler.",
+  "Kadınlar daha bilgili ve görgülü olmak için yüksek öğrenim görmeliler, ancak çalışmalarına gerek yoktur.",
+  "Kadınların çalıştığı iş ortamlarında, gayrı meşru ilişkiler olabilir.",
+  "Kadının birinci görevi, evin sorumluluğunu üstlenmek ve çocuk yetiştirmektir.",
+  "Kadına çalışma hakkı vermek, ona yeteneklerini geliştirme olanağı vermek demektir.",
+  "Kadın işgücünden yararlanmak toplum kalkınmasını hızlandırabilir."
+];
+
+var OLCEK2 = [
+  "Evlilik, kadının çalışmasına engel olmaz.",
+  "Kadın sadece ailesinin ekonomik sıkıntısı varsa çalışmalıdır.",
+  "Çalışan kadın da çocuklarına yeterince zaman ayırabilir.",
+  "Kadınlar anne olduktan sonra çalışmamalıdır.",
+  "Kadın siyasetçiler de başarılı olabilir.",
+  "Kadınlar evlendikten sonra çalışmamalıdır.",
+  "Çalışma hayatı kadının ev işlerini aksatmasına neden olmaz.",
+  "Çalışan bir kadın hayattan daha çok zevk alır.",
+  "Kadınlar erkekler tarafından her zaman korunmalıdır.",
+  "Kocası izin vermiyorsa kadın çalışmamalıdır.",
+  "Kadınlar yönetici olabilir.",
+  "Çalışan bir kadın kazandığı geliri eşine vermelidir.",
+  "Çalışan bir kadın çocuklarına daha iyi anne olur.",
+  "Erkekler de çamaşır bulaşık gibi ev işlerini yapmalıdır.",
+  "Kocasız kadın sahipsiz eve benzer.",
+  "Bir ailenin gelirini erkekler sağlamalıdır.",
+  "Kadınlar kendi başına ticarethane gibi yerler (kafe, market, emlakçı gibi) açmamalıdır.",
+  "Kadınların birinci görevi ev işlerini üstlenmektir.",
+  "Bir kadın kocasından fazla para kazanmamalıdır.",
+  "Erkek her zaman evin reisi olmalıdır.",
+  "Toplumun liderliği genellikle erkeklerin elinde olmalıdır.",
+  "Kız çocuklarına da erkek çocuklar kadar özgürlük verilmelidir.",
+  "Bir kadın kendi haklarına sahip olabilmesi için gerekirse kocasına karşı çıkabilmelidir.",
+  "Kadın kocasından yaş olarak daha küçük olmalıdır.",
+  "Ailedeki önemli kararları erkekler vermelidir."
+];
+
+var OLCEK3 = [
+  "Yaşadığım sorunların uzun süre devam edecek olma ihtimalinden korkuyorum.",
+  "Gelecekte başarısız olmaktan korkuyorum.",
+  "Hayatımda işlerin kötüye doğru gitmesinden korkuyorum.",
+  "Gelecekte zorlukların üstesinden gelememekten korkuyorum.",
+  "Her şey yolunda giderken bile, bir aksilik yaşama ihtimalinden korkuyorum.",
+  "İşler iyi gittiğinde bile kötü bir şey olacak düşüncesine kapılıyorum.",
+  "Geleceğin ne getireceğinden korkuyorum.",
+  "Aileme maddi olarak iyi koşullar sunamama kaygısı yaşıyorum.",
+  "Planlarımın yarım kalma düşüncesi beni mahvediyor.",
+  "Gelecek benim için bulanık ve belirsiz görünüyor.",
+  "Ekonomik ve politik değişikliklerin geleceğimi tehdit edeceğinden korkuyorum.",
+  "Gelecekte önemli karar alma düşüncesinden korkuyorum.",
+  "Yakında büyük bir felaket olmasından korkuyorum."
+];
+
+/* ── State ─────────────────────────────────────────────────────── */
+var veri = {};
+var videoListesi = [];
+var videoIndex   = 0;
+var videoIzlendi = false;
+
+/* ── Başlangıç ─────────────────────────────────────────────────── */
+window.addEventListener('load', function() {
+  // Rastgele grup ata
+  veri.grup = Math.random() < 0.5 ? 'A' : 'B';
+  videoListesi = veri.grup === 'A' ? GRUP_A_VIDEOLAR : GRUP_B_VIDEOLAR;
+  document.getElementById('video-toplam-bilgi').textContent = videoListesi.length;
+
+  // Ölçekleri oluştur
+  olcekUret('olcek1-maddeler', 'o1', OLCEK1);
+  olcekUret('olcek2-maddeler', 'o2', OLCEK2);
+  olcekUret('olcek3-maddeler', 'o3', OLCEK3);
+
+  // Video bitti olayı
+  document.getElementById('video-oynatici').addEventListener('ended', function() {
+    document.getElementById('video-ileri-btn').style.display = 'inline-block';
+  });
+});
+
+/* ── Ekran geçiş ───────────────────────────────────────────────── */
+function ekranGec(id) {
+  document.querySelectorAll('.ekran').forEach(function(e){ e.classList.remove('aktif'); });
+  document.getElementById(id).classList.add('aktif');
+  window.scrollTo(0, 0);
+}
+
+/* ── Demografik ────────────────────────────────────────────────── */
+function demografikDogrula() {
+  var yas  = document.getElementById('dem-yas').value.trim();
+  var cin  = document.getElementById('dem-cinsiyet').value;
+  var dog  = document.getElementById('dem-dogum').value;
+  var cal  = document.getElementById('dem-calisma').value;
+  var egit = document.getElementById('dem-egitim').value;
+  if (!yas || !cin || !dog || !cal || !egit) {
+    document.getElementById('dem-hata').style.display = 'block'; return;
+  }
+  document.getElementById('dem-hata').style.display = 'none';
+  veri.yas = yas; veri.cinsiyet = cin; veri.dogum_araligi = dog;
+  veri.calisma = cal; veri.egitim = egit;
+  ekranGec('ekran-video-aciklama');
+}
+
+/* ── Video ─────────────────────────────────────────────────────── */
+function videoBaslat() {
+  videoIndex = 0;
+  ekranGec('ekran-video');
+  videoYukle();
+}
+
+function videoYukle() {
+  var toplam = videoListesi.length;
+  document.getElementById('video-ilerleme-metin').textContent =
+    'Video ' + (videoIndex + 1) + ' / ' + toplam;
+  document.getElementById('video-ilerleme-ic').style.width =
+    ((videoIndex / toplam) * 100) + '%';
+  document.getElementById('video-ileri-btn').style.display = 'none';
+
+  var oynatici = document.getElementById('video-oynatici');
+  document.getElementById('video-kaynak').src = videoListesi[videoIndex];
+  oynatici.load();
+  oynatici.play().catch(function(){});
+}
+
+function videoIleri() {
+  videoIndex++;
+  if (videoIndex < videoListesi.length) {
+    videoYukle();
+  } else {
+    // Tüm videolar bitti → Ölçek 1
+    ekranGec('ekran-olcek1');
+  }
+}
+
+/* ── Ölçek oluştur ─────────────────────────────────────────────── */
+function olcekUret(containerId, prefix, maddeler) {
+  var el = document.getElementById(containerId);
+  el.innerHTML = '';
+  maddeler.forEach(function(madde, i) {
+    var id = prefix + '_' + (i + 1);
+    var html = '<div class="olcek-madde">';
+    html += '<div class="madde-metin">' + (i + 1) + '. ' + madde + '</div>';
+    html += '<div class="likert-satir">';
+    html += '<span class="uc">Hiç<br>Katılmıyorum</span>';
+    html += '<div class="radio-grup">';
+    for (var v = 1; v <= 5; v++) {
+      html += '<input type="radio" name="' + id + '" id="' + id + '_' + v + '" value="' + v + '"/>';
+      html += '<label for="' + id + '_' + v + '">' + v + '</label>';
+    }
+    html += '</div>';
+    html += '<span class="uc">Tamamen<br>Katılıyorum</span>';
+    html += '</div></div>';
+    el.innerHTML += html;
+  });
+}
+
+/* ── Ölçek doğrula ─────────────────────────────────────────────── */
+function olcekDogrula(no) {
+  var maddeler = no === 1 ? OLCEK1 : (no === 2 ? OLCEK2 : OLCEK3);
+  var prefix   = 'o' + no;
+  var sonuclar = {};
+  var eksik    = false;
+  maddeler.forEach(function(_, i) {
+    var id  = prefix + '_' + (i + 1);
+    var sec = document.querySelector('input[name="' + id + '"]:checked');
+    if (!sec) { eksik = true; return; }
+    sonuclar[id] = parseInt(sec.value);
+  });
+  if (eksik) {
+    document.getElementById('olcek' + no + '-hata').style.display = 'block';
+    return;
+  }
+  document.getElementById('olcek' + no + '-hata').style.display = 'none';
+  veri['olcek' + no] = sonuclar;
+
+  if (no === 1) ekranGec('ekran-olcek2');
+  else if (no === 2) ekranGec('ekran-olcek3');
+  else veriGonder();
+}
+
+/* ── CSV yardımcıları ──────────────────────────────────────────── */
+function csvSatir(obj, kolonlar) {
+  return kolonlar.map(function(k) {
+    var v = (obj[k] !== undefined && obj[k] !== null) ? String(obj[k]) : '';
+    if (v.indexOf(',') > -1 || v.indexOf('"') > -1 || v.indexOf('\n') > -1)
+      v = '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  }).join(',');
+}
+function csvIndir(icerik, dosyaAdi) {
+  var blob = new Blob(['\uFEFF' + icerik], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url; a.download = dosyaAdi; a.style.display = 'none';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 300);
+}
+function csvOlustur() {
+  var satirlar = [];
+
+  // Demografik
+  var demKol = ['bolum','alan','deger'];
+  satirlar.push(demKol.join(','));
+  [['yas',veri.yas],['cinsiyet',veri.cinsiyet],['dogum_araligi',veri.dogum_araligi],
+   ['calisma',veri.calisma],['egitim',veri.egitim],['grup',veri.grup]
+  ].forEach(function(r){
+    satirlar.push(csvSatir({bolum:'demografik',alan:r[0],deger:r[1]},demKol));
+  });
+
+  // Ölçekler
+  satirlar.push('');
+  var olcekKol = ['bolum','madde_no','puan'];
+  satirlar.push(olcekKol.join(','));
+  [1,2,3].forEach(function(no){
+    var o = veri['olcek'+no] || {};
+    Object.keys(o).forEach(function(k){
+      satirlar.push(csvSatir({bolum:'olcek'+no, madde_no:k, puan:o[k]}, olcekKol));
+    });
+  });
+
+  satirlar.push('');
+  satirlar.push('meta,zaman,'+veri.zaman);
+  return satirlar.join('\n');
+}
+
+/* ── Veri gönder ───────────────────────────────────────────────── */
+function veriGonder() {
+  ekranGec('ekran-gonderim');
+  veri.zaman    = new Date().toISOString();
+  veri.tarayici = navigator.userAgent;
+
+  // CSV indir
+  try {
+    var csv = csvOlustur();
+    csvIndir(csv, 'deney_' + veri.zaman.slice(0,19).replace(/[:.]/g,'-') + '.csv');
+  } catch(err) { console.error('CSV:', err); }
+
+  // Google Sheets
+  fetch(GOOGLE_SCRIPT_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify(veri)
+  }).then(function(){ ekranGec('ekran-bitis'); })
+    .catch(function(){ ekranGec('ekran-bitis'); });
+}
+</script>
+</body>
+</html>
